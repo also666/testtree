@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/sign_in.css">
+</head>
+<body>
+
+<div class="loginbg">
+    <div class="login_box">
+        <div class="login_box_title">
+            <h2 class="login_box_title_h2">用户登录</h2>
+        </div>
+        <div class="login_box_content">
+            <ul class="login_box_content_ul">
+                <li class="login_box_content_ul_li">
+                    <input class="login_box_content_ul_li_input on1" id="username" type="text" placeholder="请输入手机号码">
+                </li>
+                <li class="login_box_content_ul_li">
+                    <input class="login_box_content_ul_li_input on3" id="userpin" type="text" placeholder="请输入PIN">
+                </li>
+                <li class="login_box_content_ul_li">
+                    <input class="login_box_content_ul_li_input on2" id="password" type="password" placeholder="请输入密码">
+                </li>
+            </ul>
+            <div class="login_box_content_div">
+                <a class="login_box_content_div_a" id="signIn">立即登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+	$("#signIn").on('click',function() {
+	    username=$('#username').val();
+	    userpin=$('#userpin').val();
+        password=$('#password').val();
+        var data = { "mobile":username, "password":password, "pin":userpin };
+        $.ajax({
+            type : 'post',
+            url : devUrl + '/api/auth/login',
+            data : data,
+            dataType: 'json',
+            success : function(data){
+	            if(data.status == "ok"){
+	            	localStorage.setItem("token", data.token);
+	            	window.location.href = "test.html";
+	            }
+            },
+            error:function(error){
+        		console.log('error:',error);
+	      	}
+      	})
+  	});
+</script>
+<script src="js/config.js"></script>
+</body>
+</html>
+

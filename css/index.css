@@ -1,0 +1,48 @@
+*{margin: 0;padding: 0;font-size: 14px;}
+.content{width: 1300px;height: 600px;position: absolute;left: 50%;margin-left: -650px;}
+.box{width: 150px;height: 80px;border:1px gray solid;}
+.one{position: absolute;left: 575px;top: 20px;}
+.two{position: absolute;left: 245px;top: 160px;}
+.three{position: absolute;left: 905px;top: 160px;}
+.four{position: absolute;left: 80px;top: 300px;}
+.five{position: absolute;left: 410px;top: 300px;}
+.six{position: absolute;left: 740px;top: 300px;}
+.seven{position: absolute;left: 1070px;top: 300px;}
+.eight{position: absolute;left: 0px;top: 440px;}
+.nine{position: absolute;left: 160px;top: 440px;}
+.ten{position: absolute;left: 330px;top: 440px;}
+.eleven{position: absolute;left: 490px;top: 440px;}
+.twelve{position: absolute;left: 660px;top: 440px;}
+.thirteen{position: absolute;left: 820px;top: 440px;}
+.forteen{position: absolute;left: 990px;top: 440px;}
+.fifteen{position: absolute;left: 1150px;top: 440px;}
+.box-top,.box-bottom{width: 100%;height: 40px;display: flex;flex-direction: row;align-items: center;}
+.box-top{border-bottom: 1px gray solid;}
+.box-mobile{width: 100px;height: 40px;border-right:1px gray solid;text-align: center;line-height: 40px;}
+.box-pin{width: 50px;height: 40px;text-align: center;line-height: 40px;}
+.bottom-left,.bottom-center,.bottom-right{width: 50px;height: 40px;text-align: center;line-height: 40px;}
+.addBox{width: 150px;height: 80px;border:1px gray solid;display: flex;align-items: center;justify-content: center;}
+.add{width: 50px;height: 50px;}
+.choose{width: 100%;height: 100%;position: fixed;left: 0;right: 0;top: 0;bottom: 0;z-index: 9999;background: rgba(0, 0, 0, 0.6);display: none;}
+.choose .addChoose{width: 300px;height: 500px;background-color: #fff;overflow-y:auto;position: absolute;left: 50%;top: 50%;margin-left: -150px;margin-top: -250px;}
+.choose .addChoose .tit{width: 300px;height: 40px;background-color: #0683B1;color: #fff;display: flex;align-items: center;justify-content: center;font-size: 20px;position: fixed;}
+.choose .addChoose .tit .cancel{position: absolute;left: 10px;width: 20px;height: 20px;}
+.chooseUser{width: 100%;height: 40px;border-bottom: 1px gray solid;display: flex;justify-content: space-between;align-items: center;}
+.ml_0{margin-left: 20px;}
+.mr_0{margin-right: 20px;}
+
+.topLine{width: 1px;height: 30px;background-color: gray;margin-left: 50%;}
+.firstLine{width: 660px;height: 60px;position: absolute;left: 320px;top: 101px;}
+.firstLine_1{width:660px;height:29px;border:1px gray solid;border-bottom: none;}
+
+.secondLine{width: 330px;height:29px;border:1px gray solid;border-bottom: none;}
+.secondLine_1{position: absolute;left: 155px;top: 241px;}
+.secondLine_2{position: absolute;left: 815px;top: 241px;}
+
+.thirdLine{width: 160px;height: 29px;border:1px gray solid;border-bottom: none;}
+.thirdLine_1{position: absolute;left:75px;top: 381px;}
+.thirdLine_2{position: absolute;left:405px;top: 381px;}
+.thirdLine_3{position: absolute;left:735px;top: 381px;}
+.thirdLine_4{position: absolute;left:1065px;top: 381px;}
+.back{width: 210px;height: 50px;margin-left: 100px;margin-top: 20px;}
+.backBtn{width: 100px;height: 40px;border:1px gray solid;}

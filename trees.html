@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>树</title>
+	<style type="text/css">
+		*{margin: 0;padding: 0;font-size: 14px;}
+		.container{width: 1300px;height: 600px;border:1px gray solid;position: absolute;left: 50%;margin-left: -650px;}
+		.box{width: 150px;height: 80px;border:1px gray solid;}
+		.one{position: absolute;left: 575px;top: 20px;}
+		.two{position: absolute;left: 245px;top: 160px;}
+		.three{position: absolute;left: 905px;top: 160px;}
+		.four{position: absolute;left: 80px;top: 300px;}
+		.five{position: absolute;left: 410px;top: 300px;}
+		.six{position: absolute;left: 740px;top: 300px;}
+		.seven{position: absolute;left: 1070px;top: 300px;}
+		.eight{position: absolute;left: 0px;top: 440px;}
+		.nine{position: absolute;left: 160px;top: 440px;}
+		.ten{position: absolute;left: 330px;top: 440px;}
+		.eleven{position: absolute;left: 490px;top: 440px;}
+		.twelve{position: absolute;left: 660px;top: 440px;}
+		.thirteen{position: absolute;left: 820px;top: 440px;}
+		.forteen{position: absolute;left: 990px;top: 440px;}
+		.fifteen{position: absolute;left: 1150px;top: 440px;}
+		.box-top,.box-bottom{width: 100%;height: 40px;display: flex;flex-direction: row;align-items: center;}
+		.box-top{border-bottom: 1px gray solid;}
+		.box-mobile{width: 100px;height: 40px;border-right:1px gray solid;text-align: center;line-height: 40px;}
+		.box-pin{width: 50px;height: 40px;text-align: center;line-height: 40px;}
+		.bottom-left,.bottom-center,.bottom-right{width: 50px;height: 40px;text-align: center;line-height: 40px;}
+		.addBox{width: 150px;height: 80px;border:1px gray solid;display: flex;align-items: center;justify-content: center;}
+		.add{width: 50px;height: 50px;}
+	</style>
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+
+</head>
+<body>
+	<div class="container" id="con"></div>
+	<!-- <script type="text/javascript" src="js/data.js"></script> -->
+	<script src="js/config.js"></script>
+	<script type="text/javascript">
+		var resultMobile,resultPin,resultLeftLength,resultRightLength,resultNum;
+		var resultStatus; //设置节点的状态
+		
+		var Token = localStorage.getItem("token");
+		console.log(Token);
+		//
+		$(function(){
+			function userInfo(){
+				$.ajax({
+					type: "get",
+					url: devUrl + "/api/auth/me?token="+Token,
+					async: true,
+					dataType: "json",
+					success: function(data){
+						console.log(data);
+						localStorage.setItem("userId", data.id);
+					},
+					error: function(error){
+						console.log('error:',error);
+					}
+				})
+			}
+			userInfo();
+		})
+		var userId;
+		var local,result;
+		$(function(){
+			userId = localStorage.getItem("userId");
+			function aja(){
+			  	$.ajax({
+			        type: "post",
+			        url: devUrl+"/api/auth/social2",
+			        data: {"token": Token,"user_id": userId,"social": [userId]},
+			        async:true,
+			        dataType: "json",
+			        success: function(data) {
+			        	console.log(data);
+			        	postData=data;
+			        	local = postData.data.processedData;   //ID数据
+						console.log(local);
+						result = postData.data.userResult;   //用户详细信息
+						console.log(result);
+
+						var a = 1;
+						
+					    console.log(userId);
+					    showResult(a);
+			        },
+			        error:function(error){
+						console.log('error:',error);
+					}
+			    });
+			}
+			aja();
+		})
+		
+		function show(boxLocal,boxTop,boxBottom,boxClass,p){
+			if(resultStatus == 1){ //增加判断状态
+			$("#con").append("<div class='box' id='"+boxLocal+"' index='"+resultKey+"'></div>");
+			$("#"+boxLocal).append("<div class='box-top' id='"+boxTop+"'></div>");
+			$("#"+boxLocal).append("<div class='box-bottom' id='"+boxBottom+"'></div>");
+			$("#"+boxTop).append("<span class='box-mobile'>"+resultMobile+"</span>");
+			$("#"+boxTop).append("<span class='box-pin'>"+resultPin+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-left'>左"+resultLeftLength+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-center'>右"+resultRightLength+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-right'>直"+resultNum+"</span>");
+			$("#"+boxLocal).addClass(boxClass);
+			// add by Murphy  状态2 显示 添加节点
+			}else if (resultStatus == 2){
+				$("#con").append("<div class='addBox' id='"+boxLocal+"' index='"+resultKey+"'></div>");
+			    $("#"+boxLocal).append("<img src='./images/addMore.png' class='add' />")
+				$("#"+boxLocal).addClass(boxClass);
+			}else if (resultStatus == 0){
+				//清除节点
+				// console.log('暂无节点')
+			}
+			//add by Murphy end 
+		}
+		
+		function getUserInfo(n){
+			//add by Muprhy  初始化 0 表示不存在
+			resultStatus = 0;
+			//add by Murphy end
+			for(var i in local){
+					if(n == i){
+						for(var j = 0; j < result.length; j++){
+						if(result[j].id == local[i]){
+							resultMobile = result[j].mobile;
+							resultPin = result[j].pin;
+							resultLeftLength = result[j].left_length;
+							resultRightLength = result[j].right_length;
+							resultNum = result[j].invited_num;
+							resultKey = i;
+							//add by Muprhy  1 表示存在
+							resultStatus = 1; 
+							//add by Murphy end
+						}
+					}
+					break;
+				}
+			}
+			
+			//add by Muprhy 没找到的情况下，要判断上级节点是否存在
+			var master_p;
+			if (resultStatus == 0){
+				if(n%2==0){  // 上级节点的KEY值，如果n是偶数，则除以2.
+					master_p = n/2; 
+				}else{   // 上级节点的KEY值，如果n是偶数，则减去1除以2。
+					master_p = (n-1)/2; 
+				}
+				for(var i in local){
+					if(master_p != 0 && master_p == i){
+						for(var j = 0; j < result.length; j++){
+							if(result[j].id == local[i]){
+								resultStatus = 2; // 找的到上级节点，设置状态为 2 ，表示可以添加
+							}
+						}
+					}
+				}
+			}
+			// add by Murphy end
+		}
+			
+
+		function testShow(p,n){
+			var boxLocal,boxTop,boxBottom,boxClass;
+			switch(p){
+				case 1:
+				  boxLocal = "one";
+				  boxTop = "one-top";
+				  boxBottom = "one-bottom";
+				  boxClass = "one";
+				break;
+				case 2:
+				  boxLocal = "two";
+				  boxTop = "two-top";
+				  boxBottom = "two-bottom";
+				  boxClass = "two";
+				break;
+				case 3:
+				  boxLocal = "three";
+				  boxTop = "three-top";
+				  boxBottom = "three-bottom";
+				  boxClass = "three";
+				break;
+				case 4:
+				  boxLocal = "four";
+				  boxTop = "four-top";
+				  boxBottom = "four-bottom";
+				  boxClass = "four";
+				break;
+				case 5:
+				  boxLocal = "five";
+				  boxTop = "five-top";
+				  boxBottom = "five-bottom";
+				  boxClass = "five";
+				break;
+				case 6:
+				  boxLocal = "six";
+				  boxTop = "six-top";
+				  boxBottom = "six-bottom";
+				  boxClass = "six";
+				break;
+				case 7:
+				  boxLocal = "seven";
+				  boxTop = "seven-top";
+				  boxBottom = "seven-bottom";
+				  boxClass = "seven";
+				break;
+				case 8:
+				  boxLocal = "eight";
+				  boxTop = "eight-top";
+				  boxBottom = "eight-bottom";
+				  boxClass = "eight";
+				break;
+				case 9:
+				  boxLocal = "nine";
+				  boxTop = "nine-top";
+				  boxBottom = "nine-bottom";
+				  boxClass = "nine";
+				break;
+				case 10:
+				  boxLocal = "ten";
+				  boxTop = "ten-top";
+				  boxBottom = "ten-bottom";
+				  boxClass = "ten";
+				break;
+				case 11:
+				  boxLocal = "eleven";
+				  boxTop = "eleven-top";
+				  boxBottom = "eleven-bottom";
+				  boxClass = "eleven";
+				break;
+				case 12:
+				  boxLocal = "twelve";
+				  boxTop = "twelve-top";
+				  boxBottom = "twelve-bottom";
+				  boxClass = "twelve";
+				break;
+				case 13:
+				  boxLocal = "thirteen";
+				  boxTop = "thirteen-top";
+				  boxBottom = "thirteen-bottom";
+				  boxClass = "thirteen";
+				break;
+				case 14:
+				  boxLocal = "forteen";
+				  boxTop = "forteen-top";
+				  boxBottom = "forteen-bottom";
+				  boxClass = "forteen";
+				break;
+				case 15:
+				  boxLocal = "fifteen";
+				  boxTop = "fifteen-top";
+				  boxBottom = "fifteen-bottom";
+				  boxClass = "fifteen";
+				break;
+				default:
+				break;
+			}
+			getUserInfo(n);
+			show(boxLocal,boxTop,boxBottom,boxClass,p);
+		}
+		
+		//调用
+		function showResult(n){
+			testShow(1,n);
+			testShow(2,2*n);
+			testShow(3,2*n+1);
+			testShow(4,4*n);
+			testShow(5,4*n+1);
+			testShow(6,4*n+2);
+			testShow(7,4*n+3);
+			testShow(8,8*n);
+			testShow(9,8*n+1);
+			testShow(10,8*n+2);
+			testShow(11,8*n+3);
+			testShow(12,8*n+4);
+			testShow(13,8*n+5);
+			testShow(14,8*n+6);
+			testShow(15,8*n+7);
+		}
+
+		$(document).on("click",".box",function(){
+			var index = $(this).attr("index");  //当前节点的key值
+			console.log(index);
+	    	$("#con").empty();
+	    	showResult(index);
+
+	    })
+	</script>
+</body>
+</html>

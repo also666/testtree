@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>树形关系图</title>
+	<link rel="stylesheet" type="text/css" href="./css/index.css">
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+	<div>
+		<div class="choose">
+			<div class="addChoose">
+				<p class="tit"><img src="./images/arrow.png" class="cancel" />请选择</p>
+			</div>
+		</div>
+		<div class="back">
+			<button class="backBtn" id="backTop">返回顶层</button>
+			<button class="backBtn" id="backPrevious" >返回上一级</button>
+		</div>
+		
+		<div class="content" id="con">
+		</div>
+	</div>
+	
+	<script src="js/config.js"></script>
+	<script type="text/javascript">
+		var resultMobile,resultPin,resultLeftLength,resultRightLength,resultNum;
+		var resultStatus; //设置节点的状态
+
+		var Token = localStorage.getItem("token");
+
+		$(function(){
+			function userInfo(){
+				$.ajax({
+					type: "get",
+					url: devUrl + "/api/auth/me?token="+Token,
+					async: true,
+					dataType: "json",
+					success: function(data){
+						console.log(data);
+						localStorage.setItem("userId", data.id);
+					},
+					error: function(error){
+						console.log('error:',error);
+					}
+				})
+			}
+			userInfo();
+		})
+
+		var userId,userKey;
+		var local,result;
+
+		$(function(){
+			userId = localStorage.getItem("userId");
+			function aja(){
+			  	$.ajax({
+			        type: "post",
+			        url: devUrl+"/api/auth/social2",
+			        data: {"token": Token,"user_id": userId,"social": [userId]},
+			        async:true,
+			        dataType: "json",
+			        success: function(data) {
+			        	console.log(data);
+			        	postData=data;
+			        	local = postData.data.processedData;   //ID数据
+						result = postData.data.userResult;   //用户详细信息
+						for(var i in local){
+							if(userId == local[i]){
+								userKey = i;
+							}
+						}
+						var a = 1;
+					    showResult(a);
+			        },
+			        error:function(error){
+						console.log('error:',error);
+					}
+			    });
+			}
+			aja();
+		})
+		
+		function show(boxLocal,boxTop,boxBottom,boxClass,p,a,b,c){
+			if(resultStatus == 1){ //增加判断状态
+			$("#con").append("<div class='box' id='"+boxLocal+"' index='"+resultKey+"'></div>");
+			$("#"+boxLocal).append("<div class='box-top' id='"+boxTop+"'></div>");
+			$("#"+boxLocal).append("<div class='box-bottom' id='"+boxBottom+"'></div>");
+			$("#"+boxTop).append("<span class='box-mobile'>"+resultMobile+"</span>");
+			$("#"+boxTop).append("<span class='box-pin'>"+resultPin+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-left'>左"+resultLeftLength+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-center'>右"+resultRightLength+"</span>");
+			$("#"+boxBottom).append("<span class='bottom-right'>直"+resultNum+"</span>");
+			$("#"+boxLocal).addClass(boxClass);
+			if(p < 8){
+				$("#con").append("<div class='"+a+"'></div>");
+				$("."+a+"").append("<div class='"+b+"'></div>");
+				$("."+a+"").append("<div class='"+c+"'></div>");
+			}
+			// add by Murphy  状态2 显示 添加节点
+			}else if (resultStatus == 2){
+				$("#con").append("<div class='addBox' id='"+boxLocal+"' index='"+resultKey+"'position='"+p+"' ></div>");
+			    $("#"+boxLocal).append("<img src='./images/addMore.png' class='add' />")
+				$("#"+boxLocal).addClass(boxClass);
+			}else if (resultStatus == 0){
+				//清除节点
+
+				// console.log('暂无节点')
+			}
+			//add by Murphy end 
+		}
+		function showLine(a,b,c){
+			$("#con").append("<div class='"+a+"'></div>");
+			$("."+a+"").append("<div class='"+b+"'></div>");
+			$("."+a+"").append("<div class='"+c+"'></div>");
+		}
+		// showLine("firstLine","topLine","firstLine_1");
+		// showLine("secondLine_1","topLine","secondLine");
+		// showLine("secondLine_2","topLine","secondLine");
+
+		function addLine(){
+			var num=0;
+			for(var i in local){
+				num++;
+				console.log(resultStatus)
+				if(num == 1){
+					showLine("firstLine","topLine","firstLine_1");
+				}
+				if(num == 2){
+					showLine("secondLine_1","topLine","secondLine");
+				}
+				if(num == 3){
+					showLine("secondLine_2","topLine","secondLine");
+				}
+				if(num == 4){
+					showLine("thirdLine_1","topLine","thirdLine");
+				}
+				if(num == 5){
+					showLine("thirdLine_2","topLine","thirdLine");
+				}
+				if(num == 6){
+					showLine("thirdLine_3","topLine","thirdLine");
+				}
+				if(num == 7){
+					showLine("thirdLine_4","topLine","thirdLine");
+				}
+			}
+		}
+
+		function getUserInfo(n){
+			// 初始化 0 表示不存在
+			resultStatus = 0;
+			for(var i in local){
+					if(n == i){
+						for(var j = 0; j < result.length; j++){
+						if(result[j].id == local[i]){
+							resultMobile = result[j].mobile;
+							resultPin = result[j].pin;
+							resultLeftLength = result[j].left_length;
+							resultRightLength = result[j].right_length;
+							resultNum = result[j].invited_num;
+							resultKey = i;
+
+							//1 表示存在
+							resultStatus = 1; 
+						}
+					}
+					break;
+				}
+			}
+			
+			//add by Muprhy 没找到的情况下，要判断上级节点是否存在
+			var master_p;
+			if (resultStatus == 0){
+				if(n%2==0){  // 上级节点的KEY值，如果n是偶数，则除以2.
+					master_p = n/2; 
+				}else{   // 上级节点的KEY值，如果n是偶数，则减去1除以2。
+					master_p = (n-1)/2; 
+				}
+				for(var i in local){
+					if(master_p != 0 && master_p == i){
+						for(var j = 0; j < result.length; j++){
+							if(result[j].id == local[i]){
+								resultStatus = 2; // 找的到上级节点，设置状态为 2 ，表示可以添加
+							}
+						}
+					}
+				}
+			}
+			// add by Murphy end
+		}
+			
+		function testShow(p,n){
+			var boxLocal,boxTop,boxBottom,boxClass;
+			switch(p){
+				case 1:
+				  boxLocal = "one";
+				  boxTop = "one-top";
+				  boxBottom = "one-bottom";
+				  boxClass = "one";
+				  a = "firstLine";
+				  b = "topLine";
+				  c = "firstLine_1";
+				break;
+				case 2:
+				  boxLocal = "two";
+				  boxTop = "two-top";
+				  boxBottom = "two-bottom";
+				  boxClass = "two";
+				  a = "secondLine_1";
+				  b = "topLine";
+				  c = "secondLine";
+				break;
+				case 3:
+				  boxLocal = "three";
+				  boxTop = "three-top";
+				  boxBottom = "three-bottom";
+				  boxClass = "three";
+				  a = "secondLine_2";
+				  b = "topLine";
+				  c = "secondLine";
+				break;
+				case 4:
+				  boxLocal = "four";
+				  boxTop = "four-top";
+				  boxBottom = "four-bottom";
+				  boxClass = "four";
+				  a = "thirdLine_1";
+				  b = "topLine";
+				  c = "thirdLine";
+				break;
+				case 5:
+				  boxLocal = "five";
+				  boxTop = "five-top";
+				  boxBottom = "five-bottom";
+				  boxClass = "five";
+				  a = "thirdLine_2";
+				  b = "topLine";
+				  c = "thirdLine";
+				break;
+				case 6:
+				  boxLocal = "six";
+				  boxTop = "six-top";
+				  boxBottom = "six-bottom";
+				  boxClass = "six";
+				  a = "thirdLine_3";
+				  b = "topLine";
+				  c = "thirdLine";
+				break;
+				case 7:
+				  boxLocal = "seven";
+				  boxTop = "seven-top";
+				  boxBottom = "seven-bottom";
+				  boxClass = "seven";
+				  a = "thirdLine_4";
+				  b = "topLine";
+				  c = "thirdLine";
+				break;
+				case 8:
+				  boxLocal = "eight";
+				  boxTop = "eight-top";
+				  boxBottom = "eight-bottom";
+				  boxClass = "eight";
+				break;
+				case 9:
+				  boxLocal = "nine";
+				  boxTop = "nine-top";
+				  boxBottom = "nine-bottom";
+				  boxClass = "nine";
+				break;
+				case 10:
+				  boxLocal = "ten";
+				  boxTop = "ten-top";
+				  boxBottom = "ten-bottom";
+				  boxClass = "ten";
+				break;
+				case 11:
+				  boxLocal = "eleven";
+				  boxTop = "eleven-top";
+				  boxBottom = "eleven-bottom";
+				  boxClass = "eleven";
+				break;
+				case 12:
+				  boxLocal = "twelve";
+				  boxTop = "twelve-top";
+				  boxBottom = "twelve-bottom";
+				  boxClass = "twelve";
+				break;
+				case 13:
+				  boxLocal = "thirteen";
+				  boxTop = "thirteen-top";
+				  boxBottom = "thirteen-bottom";
+				  boxClass = "thirteen";
+				break;
+				case 14:
+				  boxLocal = "forteen";
+				  boxTop = "forteen-top";
+				  boxBottom = "forteen-bottom";
+				  boxClass = "forteen";
+				break;
+				case 15:
+				  boxLocal = "fifteen";
+				  boxTop = "fifteen-top";
+				  boxBottom = "fifteen-bottom";
+				  boxClass = "fifteen";
+				break;
+				default:
+				break;
+			}
+			getUserInfo(n);
+			show(boxLocal,boxTop,boxBottom,boxClass,p,a,b,c);
+			// showLine(a,b,c);
+		}
+		
+		//调用
+		function showResult(n){
+			testShow(1,n);
+			testShow(2,2*n);
+			testShow(3,2*n+1);
+			testShow(4,4*n);
+			testShow(5,4*n+1);
+			testShow(6,4*n+2);
+			testShow(7,4*n+3);
+			testShow(8,8*n);
+			testShow(9,8*n+1);
+			testShow(10,8*n+2);
+			testShow(11,8*n+3);
+			testShow(12,8*n+4);
+			testShow(13,8*n+5);
+			testShow(14,8*n+6);
+			testShow(15,8*n+7);
+		}
+
+		var index;
+		$(document).on("click",".box",function(){
+			index = $(this).attr("index");  //当前节点的key值
+			console.log(index);
+			localStorage.setItem("currentIndex", index);
+	    	$("#con").empty();
+	    	showResult(index);
+	    })
+	    var chooseUserInfo;
+	    $(function(){
+			function userInfo(){
+				var data = {"user_status": 1,"user_id": userId,"token": Token};
+				$.ajax({
+					type: "post",
+					url: devUrl + "/api/auth/invited",
+					data: data,
+					async: true,
+					dataType: "json",
+					success: function(data){
+						console.log(data);
+						chooseUserInfo = data.data;
+						console.log(chooseUserInfo)
+					},
+					error: function(error){
+						console.log('error:',error);
+					}
+				})
+			}
+			userInfo();
+		})
+		function addChooseUser(){
+			for(var i = 0; i < chooseUserInfo.length; i++){
+				$(".addChoose").append("<p class='chooseUser' index='"+chooseUserInfo[i].id+"'><span class='ml_0'>"+chooseUserInfo[i].mobile+"</span><span class='mr_0'>"+chooseUserInfo[i].pin+"</span></p>");
+			}
+		}
+		var position;
+	    $(document).on("click",".addBox",function(){
+	    	position = $(this).attr("position");  //当前节点的key值
+			console.log(position);
+	    	addChooseUser();
+	    	$(".choose").css("display","block");
+	    })
+
+
+	    var currentIndex ;
+	    $(document).on("click",".chooseUser",function(){
+	    	if(index == undefined){
+	        	index = userKey;
+	        }
+	    	var son_id = $(this).attr("index");  //当前节点的user_id值
+	    	var add_pos = position;
+	        var root_pos = index;
+	        var cocah_pos;
+	        var left_or_right;
+	        console.log(userKey);
+
+	        console.log("add_pos:",add_pos,position)
+	        console.log("root_pos:",root_pos,index)
+	        console.log("cocah_pos:",cocah_pos)
+	        switch(add_pos){
+		        case "2":
+		            cocah_pos=root_pos;
+		            break;
+		        case "3":
+		            cocah_pos=root_pos;
+		            console.log("cocah_pos",cocah_pos);
+		            console.log("root_pos",root_pos);
+		            break;
+		        case "4":
+		            cocah_pos=root_pos *2;
+		            break;
+		        case "5":
+		            cocah_pos=root_pos *2;
+		            break;
+		        case "6":
+		            cocah_pos=root_pos *2+1;
+		            break;
+		        case "7":
+		            cocah_pos=root_pos *2+1;
+		            break;
+		        case "8":
+		            cocah_pos=root_pos *4;
+		            break;
+		        case "9":
+		            cocah_pos=root_pos *4;
+		            break;
+		        case "10":
+		            cocah_pos=root_pos *4+1;
+		            break;
+		        case "11":
+		            cocah_pos=root_pos *4+1;
+		            break;
+		        case "12":
+		           cocah_pos=root_pos *4+2;
+		           break;
+		        case "13":
+		           cocah_pos=root_pos *4+2;
+		           break;
+		        case "14":
+		           cocah_pos=root_pos *4+3;
+		             break;
+		        case "15":
+		           cocah_pos=root_pos *4+3;
+		           break;
+		        default:
+		           break;
+	      	}
+            for(var i in local){
+            	console.log(cocah_pos,"and",i)
+	          	if(cocah_pos == i){
+		            for(var j = 0; j < result.length; j++){
+			            if(result[j].id == local[i]){
+			              var cocah_id = result[j].id;
+			            }
+		          	}
+		          	break;
+		        }
+   			}
+            if(add_pos%2 == 0){
+                 left_or_right = 0;
+            }else{
+                 left_or_right = 1;
+            }
+           var data = { "user_id": son_id, "cocah_id": cocah_id, "token":Token ,"type": left_or_right};
+	        $.ajax({
+	            type : 'post',
+	            url : devUrl + '/api/auth/add',
+	            data : data,
+	            dataType: 'json',
+	            success : function(data){
+		            console.log(data);
+		            if(data.status == "ok"){
+		            	$(".choose").css("display","none");
+		            	currentIndex = localStorage.getItem("currentIndex");
+		            	console.log(currentIndex);
+		            	// location.reload();
+		            	againAjax();
+		            	
+		            }else if(data.status == "error"){
+		            	alert("该位置已经有师傅了，请指定另一边！")
+		            }
+	            },
+	            error:function(error){
+	        		console.log('error:',error);
+		      	}
+	      	})
+	    })
+	    function againAjax(){
+			  	$.ajax({
+			        type: "post",
+			        url: devUrl+"/api/auth/social2",
+			        data: {"token": Token,"user_id": userId,"social": [userId]},
+			        async:true,
+			        dataType: "json",
+			        success: function(data) {
+			        	console.log(data);
+			        	postData=data;
+			        	local = postData.data.processedData;   //ID数据
+						result = postData.data.userResult;   //用户详细信息
+						console.log(currentIndex,111);
+		            	$("#con").empty();
+		            	showResult(currentIndex);
+			        },
+			        error:function(error){
+						console.log('error:',error);
+					}
+			    });
+			}
+
+	    $(".cancel").on("click",function(){
+	    	$(".choose").css("display","none");
+	    })
+	    $("#backTop").on("click",function(){
+	    	location.reload();
+	    })
+
+	    $("#backPrevious").on("click",function(){
+	    	console.log(index);
+	    	if(index == 1 || index == undefined){
+	    	}else if(index % 2 == 1){
+	    		index = (index-1) / 2;
+	    		$("#con").empty();
+	    		showResult(index);
+	    	}else{
+	    		index = index / 2;
+	    		$("#con").empty();
+	    		showResult(index);
+	    	}
+	    })
+	    
+	    showResult(1);
+	</script>
+</body>
+</html>

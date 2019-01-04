@@ -1,0 +1,239 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>canvas tree</title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			canvas{border:1px gray solid;position: absolute;left: 50%;margin-left: -650px;}
+		</style>
+		<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="1300" height="600"></canvas>
+		<script type="text/javascript">
+			var c=document.getElementById("myCanvas");
+			var ctx=c.getContext("2d");
+
+			//顶部矩形
+			function firstBlock(a,b,c,d,e){
+				ctx.strokeRect(575,20,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(575,60);
+				ctx.lineTo(725,60);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(675,20);
+				ctx.lineTo(675,60);
+				ctx.stroke();
+				ctx.font='14px 宋体';
+				ctx.fillText(a,585,45);
+				ctx.fillText(b,685,45);
+				ctx.fillText(c,590,85);
+				ctx.fillText(d,640,85);
+				ctx.fillText(e,690,85);
+			}
+
+			function drawText(a,b,c,d,e){
+				// 内容部分
+				ctx.font='14px 宋体';
+				ctx.fillText(a,660,45);
+				ctx.fillText(b,760,45);
+				ctx.fillText(c,590,85);
+				ctx.fillText(d,640,85);
+				ctx.fillText(e,690,85);
+			}
+			
+			function firstPart(){
+				ctx.beginPath();//矩形下方的箭头
+				ctx.moveTo(650,100);
+				ctx.lineTo(650,130);
+				ctx.stroke();
+				ctx.beginPath();//左叉右叉
+				ctx.moveTo(320,160);
+				ctx.lineTo(320,130);
+				ctx.lineTo(980,130);
+				ctx.lineTo(980,160);
+				ctx.stroke();
+
+				//左边矩形
+				ctx.strokeRect(245,160,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(245,200);
+				ctx.lineTo(395,200);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(345,160);
+				ctx.lineTo(345,200);
+				ctx.stroke();
+
+				//右边矩形
+				ctx.strokeRect(905,160,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(905,200);
+				ctx.lineTo(1055,200);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(1005,160);
+				ctx.lineTo(1005,200);
+				ctx.stroke();
+			}
+			firstPart();
+			function secondPart(){
+				ctx.beginPath();//矩形下方的箭头
+				ctx.moveTo(320,240);
+				ctx.lineTo(320,270);
+				ctx.stroke();
+				ctx.beginPath();//左叉右叉
+				ctx.moveTo(155,300);
+				ctx.lineTo(155,270);
+				ctx.lineTo(485,270);
+				ctx.lineTo(485,300);
+				ctx.stroke();
+
+				//左边矩形
+				ctx.strokeRect(80,300,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(80,340);
+				ctx.lineTo(230,340);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(180,300);
+				ctx.lineTo(180,340);
+				ctx.stroke();
+
+				//右边矩形
+				ctx.strokeRect(410,300,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(410,340);
+				ctx.lineTo(560,340);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(510,300);
+				ctx.lineTo(510,340);
+				ctx.stroke();
+			}
+			secondPart();
+			function thirdPart(){
+				ctx.beginPath();//矩形下方的箭头
+				ctx.moveTo(980,240);
+				ctx.lineTo(980,270);
+				ctx.stroke();
+				ctx.beginPath();//左叉右叉
+				ctx.moveTo(815,300);
+				ctx.lineTo(815,270);
+				ctx.lineTo(1145,270);
+				ctx.lineTo(1145,300);
+				ctx.stroke();
+
+				//左边矩形
+				ctx.strokeRect(740,300,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(740,340);
+				ctx.lineTo(890,340);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(840,300);
+				ctx.lineTo(840,340);
+				ctx.stroke();
+
+				//右边矩形
+				ctx.strokeRect(1070,300,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(1070,340);
+				ctx.lineTo(1220,340);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(1170,300);
+				ctx.lineTo(1170,340);
+				ctx.stroke();
+			}
+			thirdPart();
+			function fourthPart(){
+				ctx.beginPath();//矩形下方的箭头
+				ctx.moveTo(155,380);
+				ctx.lineTo(155,410);
+				ctx.stroke();
+				ctx.beginPath();//左叉右叉
+				ctx.moveTo(75,440);
+				ctx.lineTo(75,410);
+				ctx.lineTo(235,410);
+				ctx.lineTo(235,440);
+				ctx.stroke();
+
+				//左边矩形
+				ctx.strokeRect(0,440,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(0,480);
+				ctx.lineTo(150,480);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(100,440);
+				ctx.lineTo(100,480);
+				ctx.stroke();
+
+				//右边矩形
+				ctx.strokeRect(160,440,150,80); //矩形
+				ctx.beginPath();//矩形内部的横线
+				ctx.moveTo(160,480);
+				ctx.lineTo(310,480);
+				ctx.stroke();//闭合
+				ctx.beginPath();//矩形内部的竖线
+				ctx.moveTo(260,440);
+				ctx.lineTo(260,480);
+				ctx.stroke();
+			}
+			fourthPart();
+		</script>
+		<!-- <script type="text/javascript">	
+			$(function(){
+				function aja(){
+				  	$.ajax({
+				        type: "post",
+				        // url: devUrl+"/api/auth/social2",
+				        url: "https://test.orex.one/api/auth/social2",
+				        data: {user_id: '15002137023',social: ['15002137023']},
+				        async:true,
+				        dataType: "json",
+				        success: function(data) {
+				        	console.log(data);
+				        	// localStorage.setItem("mcode",data.info) ;	
+				        },
+				        error:function(error){
+							console.log('error:',error);
+						}
+				    });
+				}
+				aja();
+			})
+		</script> -->
+		<script type="text/javascript" src="js/data.js"></script>
+		<script type="text/javascript">
+			var local = postData.data.processedData;
+			console.log(local);
+			for(var i in local){
+				var localId = local[i];
+			}
+			var result = postData.data.userResult;
+			console.log(result);
+
+			for(var i = 0; i < result.length; i++){
+				// console.log(result[i].id)
+				var resultId = result[i].id;
+				if(resultId == local[2]){
+					// console.log(resultId);
+					var resultMobile = result[i].mobile;
+					var resultPin = result[i].pin;
+					var resultLeftLength = result[i].left_length;
+					var resultRightLength = result[i].right_length;
+					var resultNum = result[i].invited_num;
+					// console.log(resultMobile);
+					// console.log(resultPin);
+					// console.log(resultLeftLength);
+					// console.log(resultRightLength);
+					// console.log(resultNum);
+				}
+			}
+			firstBlock(resultMobile,resultPin,"左"+resultLeftLength,'右'+resultRightLength,'值'+resultNum);
+		</script>
+	</body>
+</html>
